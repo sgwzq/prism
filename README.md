@@ -19,10 +19,14 @@ Prism is being developed as a platform for calculating excited-state energies an
 ## Installation
 1) Install [PySCF](https://github.com/pyscf/pyscf/) and make sure it is included in the ``$PYTHONPATH`` environment variable
 2) Clone the Prism repository:
-```python
+```python3
 git clone https://github.com/sokolov-group/prism.git
 ```
 3) Include the path to the folder where Prism is located in the ```$PYTHONPATH``` environment variable
+	For example if prism folder is placed in `/home/of/foo/`, then one can add to .bash_profile or .bashrc or .zshrc
+	```bash
+	export PYTHONPATH="$PYTHONPATH:/home/of/foo"
+	```
 4) Install optional dependencies if necessary
 5) Run tests to make sure the code is working properly
 
@@ -31,43 +35,59 @@ The Prism calculations are run by means of creating and executing a Python scrip
 The electronic structure methods implemented in Prism require one- and two-electron integrals, molecular orbitals, and reference wavefunctions, which must be computed using PySCF.
 To set up a calculation with Prism, import the following modules (in addition to any others you may need):
 
-```python
+```python3
 from pyscf import gto, scf, mcscf
 import prism.interface
 import prism.mr_adc # For MR-ADC calculations
 import prism.nevpt  # For NEVPT calculations
 ```
 
-Next, as described in the [PySCF user guide](https://pyscf.org/user/index.html), specify molecular geometry, then run reference Hartree-Fock and complete active space self-consistent field (CASSCF) calculations.
+Next, initialize a molecule or cell (Geometry, charge, spin, and symmetry) in PySCF, whose help can be found in [PySCF User Guide](https://pyscf.org/user/gto.html#initializing-a-molecule),
+then run [reference Hartree-Fock](https://pyscf.org/user/scf.html) and [complete active space self-consistent field (CASSCF)](https://pyscf.org/user/mcscf.html#casscf) calculations.
 Below is an example of reference CASSCF calculation for the hydrogen fluoride (HF) molecule with the cc-pvdz basis set and 6 electrons in 6 orbitals (6e, 6o) active space.
 
-```python
+```python3
 mol = gto.M(atom = 'H 0 0 0; F 0 0 0.91', basis = 'cc-pvdz')
 mf = scf.RHF(mol).run()
 mc = mcscf.CASSCF(mf, 6, 6).run()
 ```
 
 Once the reference calculation is successfully completed, the Hartree-Fock and CASSCF objects (```mf``` and ```mc```) are passed to Prism via the interface. The `backend` parameter controls which tensor contraction library is used, and can be set to `numpy`, `opt_einsum`, or `pytblis`. If not specified (or set to `None`), Prism automatically select the best backend available.
+```python3
+# Parse PySCF objects to prism
+# The backend option can be set to 'numpy', 'opt_einsum' or 'pytblis'
+mp = prism.interface.PYSCF(mf, mc, backend = 'pytblis')
+```
 
+Then you can do calculations using NEVPT and MR_ADC methods.
 For example, a NEVPT2 energy calculation for the reference CASSCF state can be performed as follows:
 
-```python
-interface = prism.interface.PYSCF(mf, mc, backend = 'pytblis')
-nevpt = prism.nevpt.NEVPT(interface)
-nevpt.method = "nevpt2"
-e_tot, e_corr, osc = nevpt.kernel()
+```python3
+mn = prism.nevpt.NEVPT(mp)
+# You'd better not name your object like 'nevpt', 'mr_adc',
+# Because python3 may confuse your molecular object with method name in prism 
+# Especially if you use something like 'from prism import nevpt, mr_adc'
+
+mn.method = "nevpt2"
+
+mn.kernel()
+# The kernel function also returns e_tot, e_corr and osc directly
+# So if you want, the following sentence directly parses values.
+# e_tot, e_corr, osc = nevpt.kernel()
 ```
 
 Alternatively, a CVS-IP-MR-ADC calculation of core ionized states can be performed as:
 
-```python
-interface = prism.interface.PYSCF(mf, mc, backend = 'opt_einsum')
-mr_adc = prism.mr_adc.MRADC(interface)
-mr_adc.method = "mr-adc(2)"
-mr_adc.method_type = "cvs-ip"
-mr_adc.nroots = 10
-mr_adc.ncvs = 1
-e, p, x = mr_adc.kernel()
+```python3
+m_mr = prism.mr_adc.MRADC(mp)
+m_mr.method = "mr-adc(2)"
+m_mr.method_type = "cvs-ip"
+m_mr.nroots = 10
+m_mr.ncvs = 1
+
+m_mr.kernel()
+# Or Alternatively
+# e, p, x = m_mr.kernel()
 ```
 
 This calculation uses CVS-IP-MR-ADC(2) to compute 10 core ionized states ("roots").
@@ -97,8 +117,8 @@ Some important parameters for the NEVPT calculations are:
  - ```s_thresh_doubles``` (float): Parameter for removing linearly dependent (external) double excitations. Default is 1e-8. For experts only.
 
 The natural transition orbitals for any multistate NEVPT calculation can be produced by calling:
-```python
-nevpt.analyze()
+```python3
+mn.analyze()
 ```
 
 The following options control the analysis output:
@@ -106,13 +126,13 @@ The following options control the analysis output:
 - `compute_ntos` (bool, optional): If `True`, compute and write natural transition orbitals for ground to excited state transitions to a Molden file. Default is `False`.
 
 Alternatively, natural transition orbitals for any transition can be computed directly given the transition density matrix between the states:
-```python
+```python3
 from prism.tools import trans_prop
-trdm = nevpt.make_rdm1(L=1, R=2)
-w, U, Vh = trans_prop.compute_ntos(interface, trdm, initial_state=1, target_state=2)
+trdm = mn.make_rdm1(L=1, R=2)
+w, U, Vh = trans_prop.compute_ntos(mp, trdm, initial_state=1, target_state=2)
 ```
 
-The resulting `_nto_S1_S2.molden` file can be visualized using orbital visualization software such as [JMOL](http://jmol.sourceforge.net/).
+The resulting `_nto_S1_S2.molden` file can be visualized using orbital visualization software such as [JMOL](http://jmol.sourceforge.net/) or [VibeMol](https://vibemol.org/).
 
 ## Multireference algebraic diagrammatic construction theory
 Multireference algebraic diagrammatic construction theory can simulate a variety of excited electronic states (neutral excitations, ionization, electron attachment, core excitation and ionization).
@@ -133,8 +153,8 @@ Other important parameters are:
  - ```s_thresh_doubles``` (float): Parameter for removing linearly dependent (external) double excitations. Default is 1e-10. For experts only.
 
 The CVS-IP-MR-ADC spectroscopic intensities (so-called spectroscopic factors) and their orbital contributions can be analyzed by calling:
-```python
-mr_adc.analyze()
+```python3
+m_mr.analyze()
 ```
 
 The following options control the analysis output:
@@ -142,12 +162,12 @@ The following options control the analysis output:
 - `compute_dyson` (bool, optional): If `True`, compute and write Dyson orbitals to a Molden file. Default is `False`.
 
 Alternatively, Dyson orbitals can be computed directly:
-```python
+```python3
 from prism.tools import trans_prop
-dyson_mo = trans_prop.compute_dyson(interface, x)
+dyson_mo = trans_prop.compute_dyson(mp, x)
 ```
 
-The resulting `_dyson.molden` file can be visualized using orbital visualization software such as [JMOL](http://jmol.sourceforge.net/).
+The resulting `_dyson.molden` file can be visualized using orbital visualization software such as [JMOL](http://jmol.sourceforge.net/) or [VibeMol](https://vibemol.org).
 
 ## Density fitting
 The memory and disk usage of NEVPT and MR-ADC calculations can be greatly reduced by approximating the two-electron integrals with density fitting (DF). 
@@ -171,10 +191,12 @@ git submodule update --init --recursive
 The SOC calculation can be performed by setting the ```soc``` attribute:
 
 ```python
-interface = prism.interface.PYSCF(mf, mc, opt_einsum = True)
-nevpt = prism.nevpt.NEVPT(interface)
-nevpt.soc = "BP"
-nevpt.kernel()
+# Say, you already have a nevpt object:
+# mp = prism.interface.PYSCF(mf, mc, backend = 'pytblis')
+# mn = prism.nevpt.NEVPT(mp)
+
+mn.soc = "BP"
+mn.kernel()
 ```
 
 The SOC calculations can be performed for two types of SOC Hamiltionian that are specified using the ```soc``` parameter: ```"BP"``` (Breit-Pauli), ```"DKH1"``` (exact two-component Douglas–Kroll–Hess).
