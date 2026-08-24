@@ -6,10 +6,13 @@ Prism is being developed as a platform for calculating excited-state energies an
 
 # How to install
 ## Requirements
+### Python Requirement
 - Python >= 3.7;
+### Modules
 - numpy >= 1.13;
 - scipy >= 1.3;
 - h5py >= 2.7;
+- pyscf (Currently pyscf can only be installed on Linux, so you need a Linux machine before trying our package.)
 - psutil >= 7.0;
 - Optional: matplotlib >= 3.9 for plotting spectra;
 - Optional: sympy >= 1.12 for spin–orbit coupling;
@@ -17,18 +20,72 @@ Prism is being developed as a platform for calculating excited-state energies an
 - Optional: [opt_einsum](https://optimized-einsum.readthedocs.io/en/stable/) or [pytblis](https://pytblis.readthedocs.io/) for faster tensor contractions.
 
 ## Installation
-1) Install [PySCF](https://github.com/pyscf/pyscf/) and make sure it is included in the ``$PYTHONPATH`` environment variable
-2) Clone the Prism repository:
-```python3
-git clone https://github.com/sokolov-group/prism.git
+### For Users(The easiest way):
+Since there is already a package named `prism`, [(the one of dispersion modeling and MCMC implementation)](https://pypi.org/project/prism/),
+we haven't upload this package to PyPI yet.
+However, as long as you have `python >= 3.7` installed on your computer (or have [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) activated), it just take a single line of command to install our package,
+particularly friendly to users who have little experience with computer programs.
+
+First, download the source file from `GitHub Releases` , and use this command to install it:
+(For Linux Users:)
+```bash
+pip3 install prism.tar.gz
 ```
-3) Include the path to the folder where Prism is located in the ```$PYTHONPATH``` environment variable
-	For example if prism folder is placed in `/home/of/foo/`, then one can add to .bash_profile or .bashrc or .zshrc
-	```bash
-	export PYTHONPATH="$PYTHONPATH:/home/of/foo"
-	```
-4) Install optional dependencies if necessary
-5) Run tests to make sure the code is working properly
+or alternatively, if you prefer `conda`, try:
+```bash
+conda install prism.tar.gz
+```
+.
+
+If you want to realize optional features in prism, you can add a list enclosed in bracket after the install command
+```bash
+# To draw spectra, `matplotlib` is needed. To do this, use
+pip3 install prism.tar.gz[spectra]
+
+# The built-in matrix product functions provided in `numpy` or `scipy` doesn't adopt optimal algorithms automatically
+# if multiple matrices are provided at a time.
+# Using third party libs `opt_einsum` or `pytblis` to solve this:
+pip3 install prism.tar.gz[opt_einsum]
+# or
+pip3 install prism.tar.gz[pytblis]
+
+# To calculate Spin-Orbit Coupling related quantities, `scipy` is needed:
+pip3 install prism.tar.gz[soc]
+
+# To fulfill combined features, you can command something like
+pip3 install prism.tar.gz[opt_einsum,spectra]
+# or to install full features, do
+pip3 install prism.tar.gz[all]
+```
+
+But there is one thing to notice that
+`soc` feature needs another package called `socutils` which is currently not in the PyPI repository
+Currently you need to install it manually from [GitHub Pages](https://github.com/xubwa/socutils).
+
+### For Developers:
+It is a convenient way to first clone the git repository, and then build an exclusive [Python Virtual Environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) under the repo directory:
+Then, the only thing you need to do is to install contents to your `.venv` created.
+
+```bash
+git clone https://github.com/sokolov-group/prism.git
+cd prism
+
+# If your python version >= 3.7.0, you can directly use this command to create a venv of version >= 3.7.0
+python3 -m venv .venv
+# Otherwise, you need to find a way to ensure the python version under your venv >= 3.7.0
+# Some third-party softwares helps to do that.
+
+# Activate virtual environment
+source .venv/bin/activate
+
+# The -e argument ensures source code editable,
+# or in other words, if you make changes to source code,
+# it will take effect at once.
+pip3 install -e .
+
+# If you want optional features, you can add a list in brackets after `pip3 install` command.
+# See "For Users" Section.
+```
 
 # How to use
 The Prism calculations are run by means of creating and executing a Python script, which serves as the input file.

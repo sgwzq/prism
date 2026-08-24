@@ -42,11 +42,11 @@ VERSION = get_version()
 setup(
         name='prism',
         version=VERSION,
-        package_dir={'prism': 'prism'},  # packages are under directory prism
-        #include *.so *.dat files. They are now placed in MANIFEST.in
-        #package_data={'': ['*.so', '*.dylib', '*.dll', '*.dat']},
+        # package_dir={'prism': 'prism'},  # packages are under directory prism
+        # include *.so *.dat files. They are now placed in MANIFEST.in
+        # package_data={'': ['*.so', '*.dylib', '*.dll', '*.dat']},
 
-        # include_package_data=True,  # include everything in source control
+        include_package_data=True,  # include everything in source control
         packages=find_packages(exclude=['*test*', '*examples*']),
         # cmdclass={'build_py': CMakeBuildPy},
         description='A Quan. Chem. Package',

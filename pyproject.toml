@@ -1,0 +1,70 @@
+[build-system]
+requires = ['setuptools>=61.0', 'wheel']
+build-backend = 'setuptools.build_meta'
+
+
+[project]
+name = 'prism'
+dynamic = ['version']
+description = 'Prism, A Quan. Chem. Package'
+readme = 'README.md'
+classifiers = [
+  'Development Status :: 5 - Production/Stable',
+  'Intended Audience :: Science/Research',
+  'Intended Audience :: Developers',
+  'License :: OSI Approved :: GNU General Public License version 3',
+  'Programming Language :: Python',
+  'Programming Language :: Python :: 3.7',
+  'Programming Language :: Python :: 3.8',
+  'Programming Language :: Python :: 3.9',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: 3.12',
+  'Programming Language :: Python :: 3.13',
+  'Programming Language :: Python :: 3.14',
+  'Topic :: Software Development',
+  'Topic :: Scientific/Engineering',
+  'Operating System :: POSIX',
+  'Operating System :: Unix',
+  'Operating System :: MacOS',
+]
+
+maintainers = [{ name = 'Alexander Y. Sokolov', email = 'sokolov.8@osu.edu' }]
+
+authors = [{ name = 'Alexander Y. Sokolov', email = 'sokolov.8@osu.edu' }]
+
+license = { text = 'GPL-3.0' }
+
+requires-python = '>=3.7'
+dependencies = [
+  'numpy>=1.13,!=1.16,!=1.17',
+  'scipy>=1.6.0',
+  'pyscf',
+  'h5py>=2.7',
+  'setuptools',
+  'psutil'
+]
+
+[project.urls]
+# Homepage = 'http://www.prism.org'
+Repository = 'https://github.com/sokolov-group/prism'
+# Documentation = 'http://www.prism.org'
+
+[project.optional-dependencies]
+
+# Fast Tensor Contractions
+opt_einsum = ['opt_einsum']
+pytblis = ['pytblis']
+# Plotting spectra
+spectra = ['matplotlib>=3.9']
+# Spin Orbit Coupling
+soc = ['sympy >= 1.12']
+## Since 'socutils' hasn't been packaged yet, 
+## pip cannot automatically install it yet,
+## so you have to install 'socutils' manually.
+# soc = ['sympy >= 1.12', 'socutils']
+
+all = ['prism[opt_einsum, pytblis, spectra, soc]']
+
+# extras which should not be installed by 'all' components
+# Fast Tensor Contractions
