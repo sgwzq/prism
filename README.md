@@ -101,7 +101,7 @@ import prism.nevpt  # For NEVPT calculations
 
 Next, initialize a molecule or cell (Geometry, charge, spin, and symmetry) in PySCF, whose help can be found in [PySCF User Guide](https://pyscf.org/user/gto.html#initializing-a-molecule),
 then run [reference Hartree-Fock](https://pyscf.org/user/scf.html) and [complete active space self-consistent field (CASSCF)](https://pyscf.org/user/mcscf.html#casscf) calculations.
-Below is an example of reference CASSCF calculation for the hydrogen fluoride (HF) molecule with the cc-pvdz basis set and 6 electrons in 6 orbitals (6e, 6o) active space.
+Below is an example of reference CASSCF calculation for the hydrogen fluoride (HF) molecule with the cc-pvdz basis set and 6 orbitals with 6 electrons (6o, 6e) active space.
 
 ```python3
 mol = gto.M(atom = 'H 0 0 0; F 0 0 0.91', basis = 'cc-pvdz')
@@ -109,7 +109,7 @@ mf = scf.RHF(mol).run()
 mc = mcscf.CASSCF(mf, 6, 6).run()
 ```
 
-Once the reference calculation is successfully completed, the Hartree-Fock and CASSCF objects (```mf``` and ```mc```) are passed to Prism via the interface. The `backend` parameter controls which tensor contraction library is used, and can be set to `numpy`, `opt_einsum`, or `pytblis`. If not specified (or set to `None`), Prism automatically select the best backend available.
+Once the reference calculation is successfully completed, the Hartree-Fock and CASSCF objects (`mf` and `mc`) are passed to Prism via the interface. The `backend` parameter controls which tensor contraction library is used, and can be set to `numpy`, `opt_einsum`, or `pytblis`. If not specified (or set to `None`), Prism automatically select the best backend available.
 ```python3
 # Parse PySCF objects to prism
 # The backend option can be set to 'numpy', 'opt_einsum' or 'pytblis'
