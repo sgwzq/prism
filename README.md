@@ -22,34 +22,30 @@ Prism is being developed as a platform for calculating excited-state energies an
 ## Installation
 ### For Users(The easiest way):
 Since there is already a package named `prism`, [(the one of dispersion modeling and MCMC implementation)](https://pypi.org/project/prism/),
-we haven't upload this package to PyPI yet.
+we haven't upload this package to PyPI yet.  
 However, as long as you have `python >= 3.7` installed on your computer (or have [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) activated), it just take a single line of command to install our package,
 particularly friendly to users who have little experience with computer programs.
 
-First, download the source file from `GitHub Releases` , and use this command to install it:
-(For Linux Users:)
+First, download the source file from `GitHub Releases` , and use this command to install it:  
+(For Linux Users:)  
 ```bash
 pip3 install prism.tar.gz
 ```
-or alternatively, if you prefer `conda`, try:
-```bash
-conda install prism.tar.gz
-```
-.
 
 If you want to realize optional features in prism, you can add a list enclosed in bracket after the install command
 ```bash
 # To draw spectra, `matplotlib` is needed. To do this, use
 pip3 install prism.tar.gz[spectra]
 
-# The built-in matrix product functions provided in `numpy` or `scipy` doesn't adopt optimal algorithms automatically
+# The built-in matrix product functions provided in `numpy` or `scipy` 
+# doesn't adopt optimal algorithms automatically
 # if multiple matrices are provided at a time.
 # Using third party libs `opt_einsum` or `pytblis` to solve this:
 pip3 install prism.tar.gz[opt_einsum]
 # or
 pip3 install prism.tar.gz[pytblis]
 
-# To calculate Spin-Orbit Coupling related quantities, `scipy` is needed:
+# To calculate Spin-Orbit Coupling related quantities, `sympy` is needed:
 pip3 install prism.tar.gz[soc]
 
 # To fulfill combined features, you can command something like
@@ -59,38 +55,41 @@ pip3 install prism.tar.gz[all]
 ```
 
 But there is one thing to notice that
-`soc` feature needs another package called `socutils` which is currently not in the PyPI repository
-Currently you need to install it manually from [GitHub Pages](https://github.com/xubwa/socutils).
+`soc` feature needs another project called `socutils` which is currently not in the PyPI repository.  
+So currently you need to install it manually from [GitHub Pages](https://github.com/xubwa/socutils).
 
 ### For Developers:
-It is a convenient way to first clone the git repository, and then build an exclusive [Python Virtual Environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) under the repo directory:
-Then, the only thing you need to do is to install contents to your `.venv` created.
+If your have already installed python version >= 3.7.0 on your system, it is a convenient way to first clone the git repository, and then build an exclusive [Python Virtual Environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) inside the repo directory:  
 
 ```bash
 git clone https://github.com/sokolov-group/prism.git
 cd prism
 
-# If your python version >= 3.7.0, you can directly use this command to create a venv of version >= 3.7.0
 python3 -m venv .venv
-# Otherwise, you need to find a way to ensure the python version under your venv >= 3.7.0
-# Some third-party softwares helps to do that.
 
 # Activate virtual environment
 source .venv/bin/activate
 
+```
+If you prefer `conda` or some other python packages, you can also create a virtual environment with your own tools. It is possible to customize directories to hold your virtual environment. Just keep sure your python version >= 3.7.0 and have it activated.  
+
+Then, the only thing you need to do is to install package to your `.venv` created.  
+```bash
+# Now assuming you have cd to prism repo
+
+pip3 install -e .
 # The -e argument ensures source code editable,
 # or in other words, if you make changes to source code,
 # it will take effect at once.
-pip3 install -e .
 
 # If you want optional features, you can add a list in brackets after `pip3 install` command.
 # See "For Users" Section.
 ```
 
 # How to use
-The Prism calculations are run by means of creating and executing a Python script, which serves as the input file.
-The electronic structure methods implemented in Prism require one- and two-electron integrals, molecular orbitals, and reference wavefunctions, which must be computed using PySCF.
-To set up a calculation with Prism, import the following modules (in addition to any others you may need):
+The Prism calculations are run by means of creating and executing a Python script, which serves as the input file.  
+The electronic structure methods implemented in Prism require one- and two-electron integrals, molecular orbitals, and reference wave functions, which must be computed using PySCF.  
+To set up a calculation with Prism, import the following modules (in addition to any others you may need):  
 
 ```python3
 from pyscf import gto, scf, mcscf
@@ -100,7 +99,7 @@ import prism.nevpt  # For NEVPT calculations
 ```
 
 Next, initialize a molecule or cell (Geometry, charge, spin, and symmetry) in PySCF, whose help can be found in [PySCF User Guide](https://pyscf.org/user/gto.html#initializing-a-molecule),
-then run [reference Hartree-Fock](https://pyscf.org/user/scf.html) and [complete active space self-consistent field (CASSCF)](https://pyscf.org/user/mcscf.html#casscf) calculations.
+then run [reference Hartree-Fock](https://pyscf.org/user/scf.html) and [complete active space self-consistent field (CASSCF)](https://pyscf.org/user/mcscf.html#casscf) calculations.  
 Below is an example of reference CASSCF calculation for the hydrogen fluoride (HF) molecule with the cc-pvdz basis set and 6 orbitals with 6 electrons (6o, 6e) active space.
 
 ```python3
@@ -116,8 +115,8 @@ Once the reference calculation is successfully completed, the Hartree-Fock and C
 mp = prism.interface.PYSCF(mf, mc, backend = 'pytblis')
 ```
 
-Then you can do calculations using NEVPT and MR_ADC methods.
-For example, a NEVPT2 energy calculation for the reference CASSCF state can be performed as follows:
+Then you can do calculations using NEVPT and MR_ADC methods.  
+For example, a NEVPT2 energy calculation for the reference CASSCF state can be performed as follows: 
 
 ```python3
 mn = prism.nevpt.NEVPT(mp)
@@ -133,7 +132,7 @@ mn.kernel()
 # e_tot, e_corr, osc = nevpt.kernel()
 ```
 
-Alternatively, a CVS-IP-MR-ADC calculation of core ionized states can be performed as:
+Alternatively, a CVS-IP-MR-ADC calculation of core ionized states can be performed as:  
 
 ```python3
 m_mr = prism.mr_adc.MRADC(mp)
@@ -147,9 +146,9 @@ m_mr.kernel()
 # e, p, x = m_mr.kernel()
 ```
 
-This calculation uses CVS-IP-MR-ADC(2) to compute 10 core ionized states ("roots").
-The parameter ```ncvs``` controls the number of core orbitals in the hydrogen fluoride molecule, for which excited states are calculated.
-For example, setting ```ncvs = 1``` corresponds to exciting electrons from the 1s orbitals of fluorine atoms, while ```ncvs = 2``` corresponds to probing the 2s excitations.
+This calculation uses CVS-IP-MR-ADC(2) to compute 10 core ionized states ("roots").  
+The parameter `ncvs` controls the number of core orbitals in the hydrogen fluoride molecule, for which excited states are calculated.
+For example, setting `ncvs = 1` corresponds to exciting electrons from the 1s orbitals of fluorine atoms, while `ncvs = 2` corresponds to probing the 2s excitations.  
 Other examples can be found [here](examples/).
 
 # Methods and algorithms
