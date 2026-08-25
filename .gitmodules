@@ -1,8 +1,6 @@
-[submodule "socutils"]
-path = prism/socutils
-url = https://github.com/xubwa/socutils.git
-
-[submodule "cppe"]
-path = prism/cppe
-url = https://github.com/maxscheurer/cppe.git
-
+[submodule "prism/socutils"]
+	path = prism/socutils
+	url = https://github.com/xubwa/socutils.git
+[submodule "prism/cppe"]
+	path = prism/cppe
+	url = https://github.com/maxscheurer/cppe.git
