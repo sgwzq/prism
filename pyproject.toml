@@ -8,11 +8,11 @@ name = 'prism'
 dynamic = ['version']
 description = 'Prism, A Quan. Chem. Package'
 readme = 'README.md'
+license = "GPL-3.0-or-later"
 classifiers = [
   'Development Status :: 5 - Production/Stable',
   'Intended Audience :: Science/Research',
   'Intended Audience :: Developers',
-  'License :: OSI Approved :: GNU General Public License version 3',
   'Programming Language :: Python',
   'Programming Language :: Python :: 3.7',
   'Programming Language :: Python :: 3.8',
@@ -59,12 +59,14 @@ pytblis = ['pytblis']
 spectra = ['matplotlib>=3.9']
 # Spin Orbit Coupling
 soc = ['sympy >= 1.12']
+# Polarizable Embedding
+pe = ['cppe']
 ## Since 'socutils' hasn't been packaged yet, 
 ## pip cannot automatically install it yet,
 ## so you have to install 'socutils' manually.
 # soc = ['sympy >= 1.12', 'socutils']
 
-all = ['prism[opt_einsum, pytblis, spectra, soc]']
+all = ['prism[opt_einsum, pytblis, spectra, soc, pe]']
 
 # extras which should not be installed by 'all' components
 # Fast Tensor Contractions
