@@ -47,7 +47,7 @@ setup(
         # package_data={'': ['*.so', '*.dylib', '*.dll', '*.dat']},
 
         include_package_data=True,  # include everything in source control
-        packages=find_packages(exclude=['*test*', '*examples*']),
+        packages=find_packages(exclude=['*tests*', '*examples*']),
         # cmdclass={'build_py': CMakeBuildPy},
         description='A Quan. Chem. Package',
         long_description='This is a Quantum Chemistry package based on PySCF, with methods like NEVPT2 and MR-ADC, authored by Dr. Sokolov\'s gruop at https://github.com/sokolov-group/prism/'
