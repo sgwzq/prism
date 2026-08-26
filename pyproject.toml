@@ -1,19 +1,20 @@
 [build-system]
-requires = ['setuptools>=61.0', 'wheel']
+requires = ['setuptools>=61.0']
 build-backend = 'setuptools.build_meta'
 
 
 [project]
 name = 'prism'
-dynamic = ['version']
-description = 'Prism, A Quan. Chem. Package'
+version = '0.9.0'
 readme = 'README.md'
+description='A Quan. Chem. Package'
 classifiers = [
   'Development Status :: 5 - Production/Stable',
   'Intended Audience :: Science/Research',
   'Intended Audience :: Developers',
   'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
   'Programming Language :: Python',
+  'Programming Language :: Python :: 3',
   'Programming Language :: Python :: 3.7',
   'Programming Language :: Python :: 3.8',
   'Programming Language :: Python :: 3.9',
@@ -28,6 +29,7 @@ classifiers = [
   'Operating System :: Unix',
   'Operating System :: MacOS',
 ]
+requires-python = '>=3.7'
 
 maintainers = [{ name = 'Alexander Y. Sokolov', email = 'sokolov.8@osu.edu' }]
 
@@ -35,7 +37,6 @@ authors = [{ name = 'Alexander Y. Sokolov', email = 'sokolov.8@osu.edu' }]
 
 license = { text = 'GPL-3.0' }
 
-requires-python = '>=3.7'
 dependencies = [
   'numpy>=1.13,!=1.16,!=1.17',
   'scipy>=1.6.0',

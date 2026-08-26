@@ -1,3 +1,2 @@
-
-__version__ = '0.9.0'
+# Created by Ziqiu Wang < sgwzq0810@gmail.com >
 
