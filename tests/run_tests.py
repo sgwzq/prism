@@ -14,11 +14,15 @@ def execute_scripts_in_folders(base_path, selected_folders=None):
         for file in sorted(files):
             if file.endswith(".py") and file != os.path.basename(__file__):  # Avoid running itself
                 file_path = os.path.join(root, file)
-                print(f"Executing: {file_path}")
+                print(f"Executing: {file_path}", end = " ... ")
                 try:
-                    subprocess.run(["python", file_path], check=True)
+                    subprocess.run(["python", file_path],\
+                            stdout = subprocess.DEVNULL,\
+                            stderr = subprocess.DEVNULL,\
+                            check=True)
+                    print("OK.")
                 except subprocess.CalledProcessError as err:
-                    print(f"\nError executing {file_path}: {err}")
+                    print("\033[31mError: ", err, "\033[0m.")
                     err_list.append(file_path)
     test_end_time = time.time()
     time_elapse = test_end_time - test_start_time
