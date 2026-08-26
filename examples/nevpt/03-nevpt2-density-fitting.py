@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # 03-nevpt2-density-fitting.py
 # Modified by Ziqiu Wang: < sgwzq0810@gmail.com >
 
